@@ -2,6 +2,7 @@
 
 namespace App\Filament\Aliadosapp\Resources;
 
+use App\Filament\Afiliadosapp\Resources\AppointmentResource as ResourcesAppointmentResource;
 use App\Filament\Aliadosapp\Resources\AppointmentResource\Pages;
 use App\Filament\Aliadosapp\Resources\AppointmentResource\RelationManagers;
 use App\Models\Appointment;
@@ -69,16 +70,16 @@ class AppointmentResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
-                    ->numeric()
+                    ->numeric()->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('afilliate.name')
-                    ->numeric()
+                    ->numeric()->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('professional.name')
-                    ->numeric()
+                    ->numeric()->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('service.name')
-                    ->numeric()
+                    ->numeric()->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('appointment_datetime')
                     ->dateTime()
@@ -113,6 +114,14 @@ class AppointmentResource extends Resource
                 RelationManagers\MessagesRelationManager::class,
         ];
     }
+
+    public static function getWidgets(): array
+    {
+        return [
+            AppointmentResource\Widgets\AppointmenStatusOverview::class,
+        ];
+    }
+
 
     public static function getPages(): array
     {

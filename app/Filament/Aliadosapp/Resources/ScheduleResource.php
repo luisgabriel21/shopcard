@@ -56,10 +56,10 @@ class ScheduleResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('professional.name')
-                    ->numeric()
+                    ->numeric()->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('schedule_date')
-                    ->date()
+                    ->date()->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('start_time')->time(),
                 Tables\Columns\TextColumn::make('start_time')->time(),

@@ -38,6 +38,7 @@ class Appointment extends Model
 
     public function scopeForLoggedUser(Builder $builder): Builder
     {
-        return $builder->where('user_id', auth()->id())->orWhere('affiliate_id', auth()->id());
+        return $builder->where('user_id', auth()->id());
     }
+
 }

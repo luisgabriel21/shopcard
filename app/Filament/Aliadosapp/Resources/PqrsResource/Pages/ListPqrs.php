@@ -16,4 +16,11 @@ class ListPqrs extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            PqrsResource\Widgets\pqrstypeOverview::class,           
+        ];
+    }
 }

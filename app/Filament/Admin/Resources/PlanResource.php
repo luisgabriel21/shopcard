@@ -4,16 +4,13 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\PlanResource\Pages;
 use App\Filament\Admin\Resources\PlanResource\RelationManagers;
-use App\Filament\Admin\Resources\PlanResource\RelationManagers\SubscribersRelationManager;
 use App\Models\Plan;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use PhpParser\Node\Stmt\Static_;
+
 
 class PlanResource extends Resource
 {
@@ -62,7 +59,7 @@ class PlanResource extends Resource
                 Tables\Columns\TextColumn::make('description')
                 ->searchable(),
                 Tables\Columns\TextColumn::make('price')
-                    ->money()
+                    ->money('COP')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('duration_months')
                     ->numeric()

@@ -62,10 +62,10 @@ class PqrsResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
-                    ->numeric()
+                    ->numeric()->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('targetUser.name')
-                    ->numeric()
+                    ->numeric()->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('type')
                     ->searchable(),
@@ -97,6 +97,15 @@ class PqrsResource extends Resource
             RelationManagers\MessagesRelationManager::class,
         ];
     }
+
+    public static function getWidgets(): array
+    {
+        return [
+            PqrsResource\Widgets\pqrstypeOverview::class,
+        ];
+    }
+    
+
 
     public static function getPages(): array
     {

@@ -75,7 +75,7 @@ class ServicesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('category')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('price')
-                    ->money()
+                    ->money('COP')
                     ->sortable(),
             ])
             ->filters([

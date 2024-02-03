@@ -26,7 +26,6 @@ class AliadosappPanelProvider extends PanelProvider
             ->id('aliadosapp')
             ->path('aliadosapp')
             ->login()
-            ->registration()
             ->profile()
             ->authGuard('partner')
             ->colors([

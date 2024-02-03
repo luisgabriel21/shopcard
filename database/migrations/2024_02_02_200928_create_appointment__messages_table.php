@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pqrs', function (Blueprint $table) {
+        Schema::create('appointment_messages', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('appointment_id')->references('id')->on('appointments');
             $table->foreignId('user_id')->references('id')->on('users');
-            $table->foreignId('target_user_id')->references('id')->on('users');
-            $table->string('type'); // P, Q, R, S
-            $table->text('description');
-            $table->boolean('is_active')->default(true);
+            $table->text('message');
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pqrs');
+        Schema::dropIfExists('appointment_messages');
     }
 };

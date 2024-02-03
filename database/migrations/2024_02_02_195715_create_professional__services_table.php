@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pqrs', function (Blueprint $table) {
+        Schema::create('professional_services', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->references('id')->on('users');
-            $table->foreignId('target_user_id')->references('id')->on('users');
-            $table->string('type'); // P, Q, R, S
-            $table->text('description');
-            $table->boolean('is_active')->default(true);
+            $table->foreignId('professional_id')->references('id')->on('professionals');
+            $table->foreignId('service_id')->references('id')->on('services');
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pqrs');
+        Schema::dropIfExists('professional_services');
     }
 };

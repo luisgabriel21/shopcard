@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Aliadosapp\Resources\PqrsResource\RelationManagers;
+namespace App\Filament\Aliadosapp\Resources\AppointmentResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -9,7 +9,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class MessagesRelationManager extends RelationManager
 {
@@ -17,19 +17,14 @@ class MessagesRelationManager extends RelationManager
 
     public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
-        return _('Mensajes de la PQRS:');
+        return _('Mensajes relacionados con la cita:');
     }
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('sender_id')
-                ->relationship(
-                    name: 'sender',
-                    titleAttribute: 'name',
-                    modifyQueryUsing: fn (Builder $query) => $query->where('id', auth()->id())->orderBy('name'),)
-                ->required()->default(auth()->id()),
+                Forms\Components\Hidden::make('user_id')->default(auth()->id()),
                 Forms\Components\TextInput::make('message')
                     ->required()
                     ->maxLength(255),
@@ -42,14 +37,10 @@ class MessagesRelationManager extends RelationManager
             ->recordTitleAttribute('message')
             ->columns([
                 Tables\Columns\TextColumn::make('message'),
-                Tables\Columns\TextColumn::make('sender.name')
+                Tables\Columns\TextColumn::make('user.name')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -59,13 +50,17 @@ class MessagesRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
+                Tables\Actions\AttachAction::make(),
             ])
             ->actions([
-
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DetachAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-
+                    Tables\Actions\DetachBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

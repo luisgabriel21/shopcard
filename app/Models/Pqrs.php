@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 class Pqrs extends Model
 {
 
-    protected $fillable = ['user_id', 'target_user_id', 'type', 'description'];
+    protected $fillable = ['user_id', 'target_user_id', 'type', 'description', 'is_active'];
 
     public function user() : BelongsTo
     {

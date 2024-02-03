@@ -32,6 +32,8 @@ class EditPqrs extends EditRecord
                     ->required()
                     ->maxLength(65535)
                     ->columnSpanFull()->disabled(),
+                Forms\Components\Toggle::make('is_active')
+                    ->required()->default(true),
             ]);
     }
 

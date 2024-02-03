@@ -54,6 +54,8 @@ class PqrsResource extends Resource
                     ->required()
                     ->maxLength(65535)
                     ->columnSpanFull(),
+                Forms\Components\Toggle::make('is_active')
+                    ->required()->default(true),
             ]);
     }
 
@@ -77,6 +79,9 @@ class PqrsResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\IconColumn::make('is_active')
+                    ->boolean()
+                    ->sortable(),
             ])
             ->filters([
                 //

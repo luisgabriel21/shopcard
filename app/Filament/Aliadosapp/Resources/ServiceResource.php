@@ -9,6 +9,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -97,6 +98,31 @@ class ServiceResource extends Resource
             ])
             ->filters([
                 //
+                Tables\Filters\SelectFilter::make('category')
+                ->options ([
+                    'otros' => 'Otros',
+                    'medicos' => 'Servicios Médicos',
+                    'esteticos' => 'Servicios Estéticos',
+                    'odontologicos' => 'Servicios Odontológicos',
+                    'dermatologia' => 'Dermatología',
+                    'cirugia_plastica' => 'Cirugía Plástica',
+                    'ginecologia' => 'Ginecología',
+                    'oftalmologia' => 'Oftalmología',
+                    'nutricion' => 'Nutrición y Dietética',
+                    'fisioterapia' => 'Fisioterapia',
+                    'psicologia' => 'Psicología',
+                    'radiologia' => 'Radiología',
+                    'pedicura' => 'Pedicura',
+                    'corte_cabello' => 'Corte de Cabello',
+                    'manicura' => 'Manicura',
+                    'depilacion' => 'Depilación',
+                    'maquillaje' => 'Maquillaje',
+                    'masajes' => 'Masajes',
+                    'tratamientos_capilares' => 'Tratamientos Capilares',
+                    'podologia' => 'Podología',
+                    'bronceado' => 'Bronceado',
+                    // ... Agrega más categorías según tus necesidades
+                ])->native(false)->searchable()
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -112,6 +138,14 @@ class ServiceResource extends Resource
     {
         return [
             //
+            ServiceResource\RelationManagers\ProfessionalsRelationManager::class,
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            ServiceResource\Widgets\ServiceStatsOverview::class,
         ];
     }
 

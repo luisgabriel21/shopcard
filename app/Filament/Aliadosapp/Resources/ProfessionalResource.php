@@ -96,7 +96,10 @@ class ProfessionalResource extends Resource
             ])
             ->filters([
                 //
-            ])
+                Tables\Filters\SelectFilter::make('specialty')
+                ->label('Especialidad')
+                ->options(Professional::pluck('specialty', 'specialty')),
+                ])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
@@ -112,6 +115,13 @@ class ProfessionalResource extends Resource
         return [
             //
             RelationManagers\ServicesRelationManager::class,
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            ProfessionalResource\Widgets\ProfessionalStatsOverview::class,
         ];
     }
 

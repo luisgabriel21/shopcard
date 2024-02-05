@@ -16,4 +16,13 @@ class ListServices extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            ServiceResource\Widgets\ServiceStatsOverview::class,
+        ];
+    }
+
+
 }

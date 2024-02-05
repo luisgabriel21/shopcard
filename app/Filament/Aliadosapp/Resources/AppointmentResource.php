@@ -2,19 +2,29 @@
 
 namespace App\Filament\Aliadosapp\Resources;
 
-use App\Filament\Afiliadosapp\Resources\AppointmentResource as ResourcesAppointmentResource;
+
 use App\Filament\Aliadosapp\Resources\AppointmentResource\Pages;
 use App\Filament\Aliadosapp\Resources\AppointmentResource\RelationManagers;
 use App\Models\Appointment;
+use App\Models\Professional_Services;
 use App\Models\Role;
+use App\Models\Schedule;
 use Filament\Forms;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
+
+
 use Filament\Tables;
+
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 
 class AppointmentResource extends Resource
 {
@@ -43,25 +53,58 @@ class AppointmentResource extends Resource
                         name: 'user',
                         titleAttribute: 'name',
                         modifyQueryUsing: fn (Builder $query) => $query->where('id', auth()->id())->orderBy('name'),)->default(auth()->id())
-                    ->required(),
+                    ->required()->columnSpanFull(),
                 Forms\Components\Select::make('affiliate_id')
                     ->relationship( 
                         name: 'afilliate',
                         titleAttribute: 'name',
                         modifyQueryUsing: fn (Builder $query) => $query->where('role_id', Role::AFFILIATE)->orderBy('name'),)
-                    ->searchable()->required(),
-                Forms\Components\Select::make('professional_id')
-                    ->relationship('professional', 'name')->required(),
+                        ->searchable()->preload()->required(),
                 Forms\Components\Select::make('service_id')
-                    ->relationship('service', 'name')->required(),
-                Forms\Components\DateTimePicker::make('appointment_datetime')
-                    ->required()->columnSpanFull(),
+                        ->relationship( name: 'service', 
+                                        titleAttribute: 'name',
+                                        modifyQueryUsing: 
+                                            fn (Builder $query) => 
+                                                $query->where('user_id', auth()->id())->orderBy('name'))
+                    ->preload()->live()->reactive()->afterStateUpdated(function (callable $set) {$set('professional_id', null);})->required(),
+                Forms\Components\Select::make('professional_id')
+                                    ->options(
+                                        function (callable $get) { 
+                                            return Professional_Services::query()->join('professionals', 'professionals.id', '=', 'professional_services.professional_id')
+                                            ->where('professional_services.service_id', $get('service_id'))
+                                            ->where('professionals.user_id', auth()->id())
+                                            ->pluck('professionals.name', 'professionals.id');
+                                        }
+                                    )
+                    ->reactive()->live()->afterStateUpdated(function (callable $set) {$set('Agenda', null);})->required(),
+                Section::make('Agenda del profesional')
+                            ->description('Días de disponibilidad del profesional')
+                            ->icon('heroicon-m-calendar-days')->collapsible()->schema([
+                                ViewField::make('Agenda')
+                                ->hiddenLabel()
+                                ->view(view:'forms.components.schedule-professional')
+                                ->viewData([
+                                    'data' => Schedule::query()->select('schedules.schedule_date','schedules.start_time', 'schedules.end_time')
+                                                            ->join('professionals', 'professionals.id', '=', 'schedules.professional_id')
+                                                            ->where('professionals.user_id', auth()->id())->where( 'professionals.id', 2 )
+                                                            ->where( 'schedules.schedule_date','>=', now() )
+                                                            ->orderBy( 'schedules.schedule_date', 'asc')
+                                                            ->limit(3)
+                                                            ->get()
+                                                    ,
+                                    'profe' => fn (Get  $get): SupportCollection => Schedule::query()
+                                                ->where('professional_id', $get('professional_id'))->pluck('schedule_date', 'id'),
+                                ])
+                                
+                            ])->visible(static fn (callable $get) => $get('professional_id'))->reactive()->live(),
+                Forms\Components\DateTimePicker::make('appointment_datetime')->minDate(date_create('-1 day')->format('Y-m-d H:i:s'))->default(now())
+                    ->required(),
                 Forms\Components\Radio::make('status')
                     ->options([
                         'Solicitada' => 'Solicitada',
                         'Aprobada' => 'Aprobada',
                         'Cancelada' => 'Cancelada',
-                    ])->default('Petición')->inline()->columnSpanFull(),
+                    ])->default('Solicitada')->inline()->columnSpanFull(),
             ]);
     }
 
@@ -97,6 +140,12 @@ class AppointmentResource extends Resource
             ])
             ->filters([
                 //
+                Tables\Filters\SelectFilter::make('status')
+                    ->options([
+                        'Solicitada' => 'Solicitada',
+                        'Aprobada' => 'Aprobada',
+                        'Cancelada' => 'Cancelada',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -122,6 +171,18 @@ class AppointmentResource extends Resource
         ];
     }
 
+
+public static function infolist(Infolist $infolist): Infolist
+{
+    return $infolist
+        ->schema([
+            Section::make('Agenda del profesional')
+            ->description('Días de disponibilidad del profesional')
+            ->icon('heroicon-m-calendar-days')->collapsible()->schema([
+                TextEntry::make('professional.name'),
+            ]),
+        ]);
+}
 
     public static function getPages(): array
     {

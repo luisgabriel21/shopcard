@@ -5,6 +5,7 @@ namespace App\Filament\Aliadosapp\Resources;
 use App\Filament\Aliadosapp\Resources\ScheduleResource\Pages;
 use App\Filament\Aliadosapp\Resources\ScheduleResource\RelationManagers;
 use App\Models\Schedule;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -42,7 +43,7 @@ class ScheduleResource extends Resource
                     titleAttribute: 'name',
                     modifyQueryUsing: fn (Builder $query) => $query->where('user_id', auth()->id())->orderBy('name'),)
                     ->required(),
-                Forms\Components\DatePicker::make('schedule_date')->minDate(now())->default(now())
+                Forms\Components\DatePicker::make('schedule_date')->minDate(date_create('-1 day')->format('Y-m-d H:i:s'))->default(now())
                     ->required(),
                 Forms\Components\TimePicker::make('start_time')->default("08:00:00")->format('H:i')
                     ->required(),
@@ -58,11 +59,12 @@ class ScheduleResource extends Resource
                 Tables\Columns\TextColumn::make('professional.name')
                     ->numeric()->searchable()
                     ->sortable(),
+                Tables\Columns\ImageColumn::make('professional.image'),
                 Tables\Columns\TextColumn::make('schedule_date')
                     ->date()->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('start_time')->time(),
-                Tables\Columns\TextColumn::make('start_time')->time(),
+                Tables\Columns\TextColumn::make('end_time')->time(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -89,6 +91,13 @@ class ScheduleResource extends Resource
     {
         return [
             //
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            ScheduleResource\Widgets\ScheduleStatsOverview::class,
         ];
     }
 

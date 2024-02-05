@@ -16,4 +16,10 @@ class ListSchedules extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            ScheduleResource\Widgets\ScheduleStatsOverview::class,           
+        ];
+    }
 }

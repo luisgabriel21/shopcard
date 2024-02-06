@@ -10,6 +10,7 @@ use App\Models\Professional_Services;
 use App\Models\Role;
 use App\Models\Schedule;
 use Filament\Forms;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
@@ -25,6 +26,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\HtmlString;
 
 class AppointmentResource extends Resource
 {
@@ -77,26 +80,36 @@ class AppointmentResource extends Resource
                                         }
                                     )
                     ->reactive()->live()->afterStateUpdated(function (callable $set) {$set('Agenda', null);})->required(),
-                Section::make('Agenda del profesional')
-                            ->description('Días de disponibilidad del profesional')
-                            ->icon('heroicon-m-calendar-days')->collapsible()->schema([
-                                ViewField::make('Agenda')
-                                ->hiddenLabel()
-                                ->view(view:'forms.components.schedule-professional')
-                                ->viewData([
-                                    'data' => Schedule::query()->select('schedules.schedule_date','schedules.start_time', 'schedules.end_time')
+                    CheckboxList::make('Agenda')
+                               ->options(
+                                function (callable $get) { 
+                                    return Schedule::query()
                                                             ->join('professionals', 'professionals.id', '=', 'schedules.professional_id')
-                                                            ->where('professionals.user_id', auth()->id())->where( 'professionals.id', 2 )
-                                                            ->where( 'schedules.schedule_date','>=', now() )
-                                                            ->orderBy( 'schedules.schedule_date', 'asc')
+                                                            ->where('professionals.id', $get('professional_id') )
+                                                            ->where('professionals.user_id', auth()->id())
+                                                            ->where('schedules.schedule_date','>=', now() )
+                                                            ->orderBy('schedules.schedule_date', 'asc')
                                                             ->limit(3)
-                                                            ->get()
-                                                    ,
-                                    'profe' => fn (Get  $get): SupportCollection => Schedule::query()
-                                                ->where('professional_id', $get('professional_id'))->pluck('schedule_date', 'id'),
-                                ])
-                                
-                            ])->visible(static fn (callable $get) => $get('professional_id'))->reactive()->live(),
+                                                            ->pluck('schedules.schedule_date', 'schedules.id')
+                                                            ;
+                                }
+                                )
+                                ->descriptions(
+                                    function (callable $get) { 
+                                                            return Schedule::query()->select("schedules.id", 
+                                                            DB::raw("CONCAT('Desde: ',schedules.start_time,' hasta: ',schedules.end_time) as full_name"),
+                                                            "schedules.schedule_date")
+                                                                ->join('professionals', 'professionals.id', '=', 'schedules.professional_id')
+                                                                ->where('professionals.id', $get('professional_id') )
+                                                                ->where('professionals.user_id', auth()->id())
+                                                                ->where('schedules.schedule_date','>=', now() )
+                                                                ->orderBy('schedules.schedule_date', 'asc')
+                                                                ->limit(4)
+                                                                ->pluck('full_name', 'schedules.id')
+                                                                ;
+                                    }
+                                )
+                                ->visible(static fn (callable $get) => $get('professional_id'))->reactive()->live()->disabled()->columns(2),
                 Forms\Components\DateTimePicker::make('appointment_datetime')->minDate(date_create('-1 day')->format('Y-m-d H:i:s'))->default(now())
                     ->required(),
                 Forms\Components\Radio::make('status')

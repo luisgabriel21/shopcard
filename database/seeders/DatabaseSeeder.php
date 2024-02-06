@@ -16,6 +16,8 @@ use App\Models\Schedule;
 use App\Models\Service;
 use App\Models\Subscription;
 use App\Models\User;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Database\Seeder;
 use OpenSpout\Common\Entity\Row;
 
@@ -207,29 +209,42 @@ class DatabaseSeeder extends Seeder
          }
      }
 
-        // Obtener usuarios con rol "aliado"
-        $aliados = User::where('role_id', 2)->get(); // Asegúrate de que 2 sea el ID correcto del rol "aliado"
+// Obtener usuarios con rol "aliado"
+$aliados = User::where('role_id', 2)->get(); // Asegúrate de que 2 sea el ID correcto del rol "aliado"
 
-        foreach ($aliados as $aliado) {
-            // Obtener profesionales asociados a este aliado
-            $profesionales = $aliado->professionals;
+// Meses para los cuales se crearán las agendas
+$meses = ['January', 'February', 'March', 'April', 'May'];
 
-            // Verificar si hay profesionales asociados antes de iterar
-            if ($profesionales) {
-                foreach ($profesionales as $profesional) {
-                    // Crear agendas para al menos 10 días diferentes
-                    for ($i = 0; $i < 10; $i++) {
-                        Schedule::create([
-                            'user_id' => $aliado->id,
-                            'professional_id' => $profesional->id,
-                            'schedule_date' => now()->addDays($i),
-                            'start_time' => $this->generateRandomTime(),
-                            'end_time' => $this->generateRandomTime(),
-                        ]);
+foreach ($aliados as $aliado) {
+    // Obtener profesionales asociados a este aliado
+    $profesionales = $aliado->professionals;
+
+    // Verificar si hay profesionales asociados antes de iterar
+    if ($profesionales->isNotEmpty()) {
+        foreach ($profesionales as $profesional) {
+            foreach ($meses as $mes) {
+                // Crear agendas para cada día laborable del mes
+                $diasLaborables = Carbon::create($mes)->daysInMonth;
+                for ($dia = 1; $dia <= $diasLaborables; $dia++) {
+                    $fecha = Carbon::createFromDate(null, Carbon::parse($mes)->month, $dia);
+                    if ($fecha->isWeekday()) {
+                        $startTimes = ['08:00:00', '12:00:00', '17:00:00'];
+                        foreach ($startTimes as $startTime) {
+                            Schedule::create([
+                                'user_id' => $aliado->id,
+                                'professional_id' => $profesional->id,
+                                'schedule_date' => $fecha->addDays(rand(0, 4)),
+                                'start_time' => $startTime,
+                                'end_time' => $this->generateEndTime($startTime),
+                            ]);
+                        }
                     }
                 }
             }
-
+        }
+    }
+}
+        
        // Obtener todos los profesionales
        $profesionales = Professional::all();
 
@@ -248,48 +263,70 @@ class DatabaseSeeder extends Seeder
            }
        }
 
+      
 
-    // Obtener usuarios con rol "aliado"
-    $aliados = User::where('role_id', 2)->get(); // Asegúrate de que 2 sea el ID correcto del rol "aliado"
-
-    foreach ($aliados as $aliado) {
-        // Obtener profesionales asociados a este aliado
-        $profesionales = $aliado->professionals;
-
-        // Verificar si hay profesionales asociados antes de iterar
-        if ($profesionales) {
-            foreach ($profesionales as $profesional) {
-                // Obtener servicios del mismo usuario (aliado) del profesional
-                $servicios = Service::where('user_id', $aliado->id)->get();
-
-                // Verificar si hay servicios asociados antes de iterar
-                if ($servicios) {
-                    foreach ($servicios as $servicio) {
-                        // Crear al menos 10 citas para cada combinación de aliado, profesional y servicio
-                        for ($i = 0; $i < 1; $i++) {
-                            $fechaHoraCita = now()->addDays($i)->setHour(rand(8, 17))->setMinute(rand(0, 45))->setSecond(0);
-                            // Obtener usuarios con rol "afiliado"
-                            $afiliados = User::where('role_id', Role::AFFILIATE)
-                                            ->inRandomOrder()
-                                            ->limit(2)
-                                            ->get(); // Asegúrate de que 3 sea el ID correcto del rol "aliado"
-
-                            foreach ($afiliados as $afiliado) {
-                                Appointment::create([
-                                    'user_id' => $aliado->id,
-                                    'affiliate_id' => $afiliado->id, // Se asume que el aliado también es el afiliado en este caso
-                                    'professional_id' => $profesional->id,
-                                    'service_id' => $servicio->id,
-                                    'appointment_datetime' => $fechaHoraCita,
-                                    'status' => $this->generateRandomStatus(), // Puedes ajustar el estado según tus necesidades
-                                ]);
-                              }
-                        }
-                    }
-                }
-            }
-        }
-    }
+       // Obtener usuarios con rol "aliado"
+       $aliados = User::where('role_id', 2)->get(); // Asegúrate de que 2 sea el ID correcto del rol "aliado"
+       
+       foreach ($aliados as $aliado) {
+           // Obtener profesionales asociados a este aliado
+           $profesionales = $aliado->professionals;
+       
+           // Verificar si hay profesionales asociados antes de iterar
+           if ($profesionales->isNotEmpty()) {
+               foreach ($profesionales as $profesional) {
+                   // Obtener servicios del mismo usuario (aliado) del profesional
+                   $servicios = Service::where('user_id', $aliado->id)->get();
+       
+                   // Verificar si hay servicios asociados antes de iterar
+                   if ($servicios->isNotEmpty()) {
+                       foreach ($servicios as $servicio) {
+                           // Crear citas para todo el año 2024
+                           $inicioAnio = Carbon::create(2024, 1, 1, 8, 0, 0); // Fecha de inicio del año 2024
+                           $finAnio = Carbon::create(2024, 12, 31, 17, 0, 0); // Fecha de fin del año 2024
+       
+                           for ($i = $inicioAnio->copy(); $i->lte($finAnio); $i->addDay()) {
+                               // Obtener citas existentes para el profesional en la fecha actual
+                               $citasDiarias = Appointment::where('professional_id', $profesional->id)
+                                   ->whereDate('appointment_datetime', $i->toDateString())
+                                   ->count();
+       
+                               // Si el profesional ya tiene 5 citas, no agregar más
+                               if ($citasDiarias >= 5) {
+                                   continue;
+                               }
+       
+                               $fechaHoraCita = $i->copy()->setHour(rand(8, 17))->setMinute(rand(0, 45))->setSecond(0);
+       
+                               // Definir estados de las citas según el mes
+                               $estadoCita = 'Solicitada'; // Por defecto, las citas futuras son solicitadas
+                               if ($i->month == 1) {
+                                   $estadoCita = rand(0, 4) > 0 ? 'Aprobada' : 'Cancelada'; // En enero, la mayoría aprobadas, algunas canceladas
+                               }
+       
+                               // Obtener usuarios con rol "afiliado"
+                               $afiliados = User::where('role_id', 3)
+                                   ->inRandomOrder()
+                                   ->limit(2)
+                                   ->get(); // Asegúrate de que 3 sea el ID correcto del rol "afiliado"
+       
+                               foreach ($afiliados as $afiliado) {
+                                   Appointment::create([
+                                       'user_id' => $aliado->id,
+                                       'affiliate_id' => $afiliado->id, // Se asume que el aliado también es el afiliado en este caso
+                                       'professional_id' => $profesional->id,
+                                       'service_id' => $servicio->id,
+                                       'appointment_datetime' => $fechaHoraCita,
+                                       'status' => $estadoCita,
+                                   ]);
+                               }
+                           }
+                       }
+                   }
+               }
+           }
+       }
+       
 
 
        // Obtener todas las citas
@@ -310,7 +347,13 @@ class DatabaseSeeder extends Seeder
         }
 
 
-    }
+    
+}
+// Método para generar la hora de finalización basada en la hora de inicio
+private function generateEndTime($startTime)
+{
+    $endTime = Carbon::parse($startTime)->addHours(4); // Se asume una duración de 4 horas
+    return $endTime->format('H:i:s');
 }
 
     private function generateRandomStatus()
@@ -323,7 +366,6 @@ class DatabaseSeeder extends Seeder
      return $status[array_rand($status)];
       
     }
-
 
     private function generateRandomTime()
     {

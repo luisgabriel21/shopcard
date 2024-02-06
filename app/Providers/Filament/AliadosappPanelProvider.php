@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Aliadosapp\Resources\AppointmentResource\Widgets\AppointmenStatusOverview;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -45,8 +46,7 @@ class AliadosappPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Aliadosapp/Widgets'), for: 'App\\Filament\\Aliadosapp\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+
             ])
             ->middleware([
                 EncryptCookies::class,

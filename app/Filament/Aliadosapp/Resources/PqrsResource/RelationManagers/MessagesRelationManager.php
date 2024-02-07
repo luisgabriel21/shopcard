@@ -4,6 +4,7 @@ namespace App\Filament\Aliadosapp\Resources\PqrsResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -59,6 +60,7 @@ class MessagesRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
+                    
             ])
             ->actions([
 

@@ -11,23 +11,20 @@ use App\Models\Role;
 use App\Models\Schedule;
 use Filament\Forms;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
-use Filament\Forms\Get;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-
-
 use Filament\Tables;
-
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\HtmlString;
+use Filament\Infolists\Components\Grid;
+use Filament\Infolists\Components\Split;
+use Filament\Support\Enums\FontWeight;
 
 class AppointmentResource extends Resource
 {
@@ -162,6 +159,7 @@ class AppointmentResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -187,13 +185,67 @@ class AppointmentResource extends Resource
 
 public static function infolist(Infolist $infolist): Infolist
 {
-    return $infolist
-        ->schema([
-            Section::make('Agenda del profesional')
-            ->description('Días de disponibilidad del profesional')
-            ->icon('heroicon-m-calendar-days')->collapsible()->schema([
-                TextEntry::make('professional.name'),
-            ]),
+    return $infolist->schema([
+            Grid::make([
+                'default' => 1,
+                'sm' => 2,
+                'md' => 3,
+                'lg' => 4,
+                'xl' => 6,
+                '2xl' => 8,
+            ])    
+            ->schema([
+                Section::make('Profesional')
+                    ->description('Profesional a cargo de la cita:')
+                    ->icon('heroicon-m-user-group')
+                    ->schema([
+                        Split::make([
+                            Section::make([
+                                ImageEntry::make('professional.image')->hiddenLabel(),
+                                TextEntry::make('professional.name')
+                                    ->hiddenLabel()
+                                    ->size(TextEntry\TextEntrySize::Large)
+                                    ->weight(FontWeight::Bold),
+                                        
+                            ])->columns(1),
+                            Section::make([
+                                
+                                TextEntry::make('professional.phone_number')->hiddenLabel()->icon('heroicon-m-phone')->iconColor('primary'),
+                                TextEntry::make('professional.email')->hiddenLabel()->icon('heroicon-m-envelope')->iconColor('primary'),
+                                TextEntry::make('professional.description')->hiddenLabel()->columnSpan(2),
+                            ])->grow(false),
+                            ])->from('md'),
+                        ])
+                    ])->columnSpanFull()->grow(),
+                    Section::make('Cita')
+                    ->description('Datos de la cita:')
+                    ->icon('heroicon-m-calendar-days')
+                    ->schema([
+                        Split::make([
+                            TextEntry::make('appointment_datetime')->label('Fecha:')->badge()->color('danger')->columnSpan(2),
+                            TextEntry::make('status')->label('Estado:')->badge()->color('success')->columnSpan(2),
+                        ])
+                    ]),
+                    Split::make([
+                            Section::make('Servicio:')->icon('heroicon-m-clipboard-document-list')->schema([
+                                TextEntry::make('service.name')
+                                    ->hiddenLabel()                                    
+                                    ->size(TextEntry\TextEntrySize::Large)
+                                    ->weight(FontWeight::Bold),
+                                TextEntry::make('service.category')->hiddenLabel(),
+                                TextEntry::make('service.price')->hiddenLabel()->icon('heroicon-m-currency-dollar')->iconColor('primary')->badge()->color('success'),
+                                TextEntry::make('service.description')->hiddenLabel()->columnSpan(3),
+                            ])->grow(false),
+                            Section::make('Afiliado:')->icon('heroicon-m-user-circle')->schema([
+                                TextEntry::make('afilliate.name')->hiddenLabel()->columnSpan(2)
+                                    ->size(TextEntry\TextEntrySize::Large)
+                                    ->weight(FontWeight::Bold),
+                                TextEntry::make('afilliate.email')->hiddenLabel()->columnSpan(2)->icon('heroicon-m-envelope')
+                                ->iconColor('primary'),
+
+                             ])->grow(false),
+                             ])->columnSpanFull()->grow(),
+                    
         ]);
 }
 
@@ -203,6 +255,7 @@ public static function infolist(Infolist $infolist): Infolist
             'index' => Pages\ListAppointments::route('/'),
             'create' => Pages\CreateAppointment::route('/create'),
             'edit' => Pages\EditAppointment::route('/{record}/edit'),
+            
         ];
     }
 }

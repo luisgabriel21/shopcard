@@ -61,6 +61,7 @@ class AliadosappPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])->sidebarCollapsibleOnDesktop()->topNavigation();
+            ])->databaseNotifications()->databaseNotificationsPolling(interval:'2s')
+            ->sidebarCollapsibleOnDesktop()->topNavigation();
     }
 }

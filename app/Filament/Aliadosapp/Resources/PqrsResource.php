@@ -11,7 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Notifications\Notification;
 
 class PqrsResource extends Resource
 {
@@ -54,6 +54,7 @@ class PqrsResource extends Resource
                     ->required()
                     ->maxLength(65535)
                     ->columnSpanFull(),
+                    
             ]);
     }
 
@@ -82,7 +83,6 @@ class PqrsResource extends Resource
                 //
             ])
             ->actions([
-                
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

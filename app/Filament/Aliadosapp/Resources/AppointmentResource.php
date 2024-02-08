@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\DB;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Split;
 use Filament\Support\Enums\FontWeight;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction as TablesExportBulkAction;
 
 class AppointmentResource extends Resource
 {
@@ -164,6 +165,7 @@ class AppointmentResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    TablesExportBulkAction::make()
                 ]),
             ]);
     }

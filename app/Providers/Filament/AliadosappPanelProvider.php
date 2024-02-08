@@ -18,6 +18,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use pxlrbt\FilamentSpotlight\SpotlightPlugin;
 
 class AliadosappPanelProvider extends PanelProvider
 {
@@ -61,7 +62,10 @@ class AliadosappPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])->databaseNotifications()->databaseNotificationsPolling(interval:'2s')
+            ])->databaseNotifications()
+            ->plugins([
+                SpotlightPlugin::make(),
+            ])
             ->sidebarCollapsibleOnDesktop()->topNavigation();
     }
 }

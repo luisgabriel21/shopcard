@@ -74,8 +74,10 @@ class User extends Authenticatable
     // Relación con el modelo PQR (un usuario puede tener muchas PQRs)
     public function pqrs(): HasMany
     {
-        return $this->hasMany(Pqrs::class);
+        return $this->hasMany(Pqrs::class. 'user_id', 'target_user_id');
     }
+
+
 
     // Relación con el modelo PQRMessage (un usuario puede tener muchos mensajes de PQR)
     public function pqrsMessages(): HasMany

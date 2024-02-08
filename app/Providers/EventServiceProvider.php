@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Appointment;
+use App\Models\Pqrs;
+use App\Observers\AppointmentObserver;
+use App\Observers\PqrsObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -26,6 +30,11 @@ class EventServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+
+        
+        Appointment::observe(AppointmentObserver::class);
+        Pqrs::observe(PqrsObserver::class);
+        
     }
 
     /**

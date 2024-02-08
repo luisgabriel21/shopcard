@@ -62,6 +62,8 @@ class AfiliadosappPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])->sidebarCollapsibleOnDesktop()->topNavigation();
+            ])->databaseNotifications()
+            ->sidebarCollapsibleOnDesktop()
+            ->topNavigation();
     }
 }

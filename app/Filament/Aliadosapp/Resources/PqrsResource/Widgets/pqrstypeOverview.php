@@ -17,10 +17,18 @@ class pqrstypeOverview extends BaseWidget
            
         return [
             //
-            Stat::make('Peticiones', $peticiones),
-            Stat::make('Quejas', $quejas),
-            Stat::make('Reclamos', $reclamos),
-            Stat::make('Solicitudes', $solicitudes),
+            Stat::make('Peticiones', $peticiones)->description('Número total de peticiones recibidas o realizadas')
+            ->descriptionIcon('heroicon-m-bell-alert')
+            ->color('info'),
+            Stat::make('Quejas', $quejas)->description('Número total de quejas recibidas o realizadas')
+            ->descriptionIcon('heroicon-m-bell-alert')
+            ->color('danger'),
+            Stat::make('Reclamos', $reclamos)->description('Número total de reclamos recibidos o realizados')
+            ->descriptionIcon('heroicon-m-bell-alert')
+            ->color('warning'),
+            Stat::make('Solicitudes', $solicitudes)->description('Número total de solicitudes recibidas o realizadas')
+            ->descriptionIcon('heroicon-m-bell-alert')
+            ->color('info'),
         ];
     }
 }

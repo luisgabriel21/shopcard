@@ -115,4 +115,9 @@ class User extends Authenticatable
         return $this->hasMany(Appointment_Messages::class);
     }
 
+    public function campaigns(): HasMany
+    {
+        return $this->hasMany(Campaign::class);
+    }
+
 }

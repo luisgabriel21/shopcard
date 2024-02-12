@@ -12,6 +12,8 @@ use App\Models\Schedule;
 use Filament\Forms;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Actions;
+use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\Section;
@@ -197,6 +199,7 @@ public static function infolist(Infolist $infolist): Infolist
                 '2xl' => 8,
             ])    
             ->schema([
+
                 Section::make('Profesional')
                     ->description('Profesional a cargo de la cita:')
                     ->icon('heroicon-m-user-group')
@@ -247,6 +250,7 @@ public static function infolist(Infolist $infolist): Infolist
 
                              ])->grow(false),
                              ])->columnSpanFull()->grow(),
+
                     
         ]);
 }

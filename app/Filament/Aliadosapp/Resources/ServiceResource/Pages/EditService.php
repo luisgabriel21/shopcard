@@ -15,6 +15,7 @@ class EditService extends EditRecord
     {
         return [
             Actions\DeleteAction::make(),
+            
         ];
     }
 }

@@ -19,6 +19,11 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use pxlrbt\FilamentSpotlight\SpotlightPlugin;
+use Z3d0X\FilamentFabricator\FilamentFabricatorPlugin;
+use Z3d0X\FilamentFabricator\Facades\FilamentFabricator;
+use Illuminate\Foundation\Vite;
+use Illuminate\Support\HtmlString;
+use Z3d0X\FilamentFabricator\Enums\BlockPickerStyle;
 
 class AliadosappPanelProvider extends PanelProvider
 {
@@ -49,6 +54,16 @@ class AliadosappPanelProvider extends PanelProvider
             ->widgets([
 
             ])
+            ->plugins([
+                \Awcodes\Curator\CuratorPlugin::make()
+                    ->label('Multimedia')
+                    ->pluralLabel('Multimedia')
+                    ->navigationIcon('heroicon-o-photo')
+                    ->navigationGroup('Marketing')
+                    ->navigationSort(3)
+                    ->navigationCountBadge(),
+                    FilamentFabricatorPlugin::make()->blockPickerStyle(BlockPickerStyle::Modal),
+            ])->viteTheme('resources/css/filament/aliadosapp/theme.css')
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

@@ -28,5 +28,9 @@ class Service extends Model
         return $builder->where('user_id', auth()->id());
     }
 
+    public function campaigns(): HasMany
+    {
+        return $this->hasMany(Campaign::class);
+    }
 
 }

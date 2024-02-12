@@ -5,6 +5,7 @@ namespace App\Filament\Aliadosapp\Resources;
 use App\Filament\Aliadosapp\Resources\ServiceResource\Pages;
 use App\Filament\Aliadosapp\Resources\ServiceResource\RelationManagers;
 use App\Models\Service;
+use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -118,6 +119,7 @@ class ServiceResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

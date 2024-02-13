@@ -41,7 +41,7 @@ class AliadosappPanelProvider extends PanelProvider
             ])
             ->font('Gotham')
             ->brandName('Shopcard')
-            ->brandLogo(asset('images/logoshopcard1.jpg'))
+            ->brandLogo(asset('images/logoshopcard1.png'))
             ->darkModeBrandLogo(asset('images/logoshopcard2.png'))
             ->brandLogoHeight('4rem')
             ->favicon(asset('images/favicon.png'))
@@ -62,7 +62,7 @@ class AliadosappPanelProvider extends PanelProvider
                     ->navigationGroup('Marketing')
                     ->navigationSort(3)
                     ->navigationCountBadge(),
-                    FilamentFabricatorPlugin::make()->blockPickerStyle(BlockPickerStyle::Modal),
+                    FilamentFabricatorPlugin::make(),
             ])->viteTheme('resources/css/filament/aliadosapp/theme.css')
             ->middleware([
                 EncryptCookies::class,

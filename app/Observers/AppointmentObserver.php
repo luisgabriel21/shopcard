@@ -6,9 +6,8 @@ use App\Models\Affiliate;
 use App\Models\Appointment;
 use App\Models\Professional;
 use App\Models\User;
-use App\Notifications\AppointmentStatus;
 use App\Notifications\SystemStatus;
-use Filament\Actions\Action;
+
 use Filament\Notifications\Notification;
 
 class AppointmentObserver

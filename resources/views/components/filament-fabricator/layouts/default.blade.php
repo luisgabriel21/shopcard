@@ -1,18 +1,14 @@
 @props(['page'])
 <!DOCTYPE html>
-<html lang="{{ str_replace('_','-', app()->getlocale())}}">
+<html lang="es">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<head>
     <script src="https://cdn.tailwindcss.com"></script>
-
-
-    <title>Shopcard<x-filament-fabricator::layouts.base :title="$page->title"></title>
-
-            </style>
-    
-
+    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
+    <title>Flyer Promocional Shopcard</title>
+    <x-filament-fabricator::layouts.base :title="$page->title">
     {{-- Header Here --}}
 </head>
 

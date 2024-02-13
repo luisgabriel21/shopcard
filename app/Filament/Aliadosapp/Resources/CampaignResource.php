@@ -3,7 +3,10 @@
 namespace App\Filament\Aliadosapp\Resources;
 
 use App\Filament\Aliadosapp\Resources\CampaignResource\Pages;
+use App\Models\Affiliate;
 use App\Models\Campaign;
+use App\Models\User;
+use App\Notifications\SystemStatus;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,6 +16,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Awcodes\Curator\Components\Tables\CuratorColumn;
+use Filament\Actions\Action;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Notifications\Notification;
 
 class CampaignResource extends Resource
 {
@@ -91,6 +97,39 @@ class CampaignResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('Notificar usuarios')
+                    ->form([
+                        CheckboxList::make('affiliates')
+                                ->label('Afiliados')
+                                ->options(User::all()->where('role_id', 3)->pluck('name', 'id'))
+                                ->searchable()
+                                ->searchPrompt('Buscar afiliados para enviar el correo')
+                                ->bulkToggleable()
+                                ->columns(4)
+                                ->gridDirection('row')
+                                
+                                
+
+                    ])
+                    ->action( 
+                        function (array $data) {
+                            foreach ($data['affiliates'] as $affiliateId) 
+                                User::find($affiliateId)->notify
+                                    (new SystemStatus('Hay una nueva campaña promocial!', 
+                                    'Hola te contactamos para contarte que hay una nueva campaña promocial, 
+                                     entra al sistema para ver los detalles'));
+
+                                $recipient = collect([Affiliate::find($affiliateId)]);
+                                Notification::make()
+                                    ->title(title:'Hay una nueva campaña promocional:')
+                                    ->success()
+                                    ->icon('heroicon-m-gift')
+                                    ->body( 
+                                    '<p>- Hay una nueva campaña promocial, dale una mirada desde el menú campañas</p>')
+                                    ->sendToDatabase($recipient); 
+                        }
+                    )->icon('heroicon-o-envelope'),
+                    
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

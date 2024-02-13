@@ -33,7 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->font('Gotham')
             ->brandName('Shopcard')
-            ->brandLogo(asset('images/logoshopcard1.jpg'))
+            ->brandLogo(asset('images/logoshopcard1.png'))
             ->darkModeBrandLogo(asset('images/logoshopcard2.png'))
             ->brandLogoHeight('4rem')
             ->favicon(asset('images/favicon.png'))

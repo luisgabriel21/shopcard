@@ -63,7 +63,7 @@
         ],
         "safe-install-dev": [
             "composer instal --ignore-platform-req=php --ignore-platform-req=ext-zip"
-        ],
+        ]
     },
     "extra": {
         "laravel": {

@@ -57,7 +57,13 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
-        ]
+        ],
+        "safe-update-dev": [
+            "composer update --ignore-platform-req=php --ignore-platform-req=ext-zip"
+        ],
+        "safe-install-dev": [
+            "composer instal --ignore-platform-req=php --ignore-platform-req=ext-zip"
+        ],
     },
     "extra": {
         "laravel": {

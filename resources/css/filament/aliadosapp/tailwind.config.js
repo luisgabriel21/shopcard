@@ -7,13 +7,7 @@ export default {
         './resources/views/filament/aliadosapp/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
         './vendor/awcodes/filament-curator/resources/**/*.blade.php',
+        './pages/**/*.{html,js}',
+        './components/**/*.{html,js}',
     ],
-}
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    './pages/**/*.{html,js}',
-    './components/**/*.{html,js}',
-  ],
-  // ...
 }

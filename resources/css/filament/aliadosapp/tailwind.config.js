@@ -9,3 +9,11 @@ export default {
         './vendor/awcodes/filament-curator/resources/**/*.blade.php',
     ],
 }
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    './pages/**/*.{html,js}',
+    './components/**/*.{html,js}',
+  ],
+  // ...
+}

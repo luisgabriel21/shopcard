@@ -21,7 +21,7 @@
         @endforeach
 
         @if ($favicon = \Z3d0X\FilamentFabricator\Facades\FilamentFabricator::getFavicon())
-            <link rel="icon" href="{{ $favicon }}">
+            <link rel="icon" href="{{ asset($favicon) }}">
         @endif
 
         <title>{{ $title ? "{$title} - " : null }} {{ config('app.name') }}</title>
@@ -36,7 +36,7 @@
             @if (\Illuminate\Support\Str::of($path)->startsWith('<'))
                 {!! $path !!}
             @else
-                <link rel="stylesheet" href="{{ $path }}" />
+                <link rel="stylesheet" href="{{ asset($path) }}" />
             @endif
         @endforeach
 
